@@ -228,7 +228,7 @@
         <div class="row text-center">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="heading-count">
-                    <h2 class="wow fadeInDown" data-wow-delay="0.2s">:المباراة القادمة سوف تكون خلال</h2>
+                    <h2 class="wow fadeInDown" data-wow-delay="0.2s">:المباراة القادمة سوف تكون بعد</h2>
                 </div>
             </div>
             <div class="col-md-12 col-sm-12 col-xs-12">
@@ -243,6 +243,7 @@
 <!-- Coundown Section End -->
 
 <!-- Coundown Section Start -->
+@if($closest_match_time && $closest_match_date)
 <section id="" class="countdown-timer section-padding">
     <div class="container">
         <div class="row text-center">
@@ -279,6 +280,7 @@
         </div>
     </div>
 </section>
+@endif
 <!-- Coundown Section End -->
 
 <!-- Counter Area Start-->
@@ -298,7 +300,7 @@
                 <div class="counter wow fadeInRight" data-wow-delay="0.6s">
                     <div class="icon"><i class="lni-timer"></i></div>
                     <p>وقت المباراة القادمة</p>
-                    <span>@php echo($time); @endphp – @php echo($end_match_time); @endphp</span>
+                    <span>@php echo($closest_match_time ? $closest_match_time : "غير محدد"); @endphp – @php echo($end_match_time ? $end_match_time : "غير محدد"); @endphp</span>
                 </div>
             </div>
             <!-- Counter Item -->
@@ -306,7 +308,7 @@
                 <div class="counter wow fadeInRight" data-wow-delay="1.2s">
                     <div class="icon"><i class="lni-calendar"></i></div>
                     <p>تاريخ المباراة القادمة</p>
-                    <span>@php echo($date); @endphp</span>
+                    <span>@php echo($closest_match_date ? $closest_match_date : "غير محدد"); @endphp</span>
                 </div>
             </div>
             <!-- Counter Item -->
@@ -463,8 +465,8 @@
 <script src="{{ asset('welcomePage/assets/js/jquery.slicknav.js') }}"></script>
 <script src="{{ asset('welcomePage/assets/js/nivo-lightbox.js') }}"></script>
 <script src="{{ asset('welcomePage/assets/js/main.js') }}"></script>
-@php echo($date) @endphp
-@php echo($time) @endphp
+@php echo($closest_match_date ? $closest_match_date : "<script>var formatted_string = '2000/5/5'</script>") @endphp
+@php echo($closest_match_time ? $closest_match_time : "<script>var formatted_time = '09:25 AM'</script>") @endphp
 <script>
     // Set the date we're counting down to
     var countDownDate = new Date(formatted_string + ' ' + formatted_time).getTime();

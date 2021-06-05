@@ -1,13 +1,14 @@
 <script>
 export default {
-    mounted() {
-    },
     data() {
         return {
             title : "إضافة مباراة جديدة",
             buttonName: "إضــافــة",
             match_time: '',
             match_date: '',
+            default_date: '',
+            data_changed: false,
+            key: '0',
             align: 'right',
             onOpen: "5:16 PM",
             leagueName: "",
@@ -30,7 +31,40 @@ export default {
         teams: null,
         leagues: null,
     },
+    mounted() {
+        this.$nextTick(() => { //with this we skip the first change
+            this.data_changed = true;
+        });
+    },
+    watch: {
+        match_date: function(val){
+            if(this.data_changed){
+                this.match_time= '';
+            }
+            this.default_date = this.changeDateFormat(parseInt(val));
+        }
+    },
     methods: {
+        changeDateFormat: function(val){
+            var date_not_formatted = new Date(val);
+            var formatted_string = date_not_formatted.getFullYear() + '/';
+            // e.g. : 2016/
+            if (date_not_formatted.getMonth() < 9) {
+                formatted_string += '0';
+            }
+            // e.g. : 2 -> 02
+            formatted_string += (date_not_formatted.getMonth() + 1);
+            // e.g. : 0 = January -> 1 = January
+            formatted_string += '/';
+            // e.g. : 2016/02/
+            if(date_not_formatted.getDate() < 10) {
+                formatted_string += '0';
+            }
+            // e.g. : 8 -> 08
+            formatted_string += date_not_formatted.getDate();
+            // e.g. : 2016/02/08
+            return formatted_string;
+        },
         makeDisable(index, e){
             console.log(e);
         },
@@ -110,6 +144,8 @@ export default {
             this.selectedLeague = this.match.league_id;
             this.selectedTeam1 = this.match.team_1;
             this.selectedTeam2 = this.match.team_2;
+            this.default_date = this.changeDateFormat(parseInt(this.match.match_date));
+            console.log(this.match.match_time);
             this.match_time = this.match.match_time;
             this.match_date = this.match.match_date;
             for(var i = 0; i < this.teamsInDB.length; i++) {

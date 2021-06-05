@@ -66,25 +66,6 @@
                         </div>
                         <div class="form-group">
                             <div class="input-group">
-                                <el-time-picker
-                                    v-model="match_time"
-                                    name="match_time"
-                                    :picker-options="{selectableRange: '00:00:00 - 23:59:59'}"
-                                    format="hh:mm A"
-                                    :align="align"
-                                    :editable="false"
-                                    value-format="timestamp"
-                                    valueOnOpen="onOpen"
-                                    placeholder="اختر وقت المباراة">
-                                </el-time-picker>
-                            </div>
-                        </div>
-                        <div class="alert-danger"
-                             style="text-align: right;width: 100%;margin: 15px 0;padding: 0 15px;color: #822424;"
-                             v-if="validations && validations.match_time">
-                            @{{ validations['match_time'][0] }}
-                        </div><div class="form-group">
-                            <div class="input-group">
                                 <el-date-picker
                                     v-model="match_date"
                                     name="match_date"
@@ -101,6 +82,28 @@
                              style="text-align: right;width: 100%;margin: 15px 0;padding: 0 15px;color: #822424;"
                              v-if="validations && validations.match_date">
                             @{{ validations['match_date'][0] }}
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <el-time-picker
+                                    v-model="match_time"
+                                    name="match_time"
+                                    :picker-options="{selectableRange: '00:00:00 - 23:59:59'}"
+                                    format="hh:mm A"
+                                    :align="align"
+                                    ref="time"
+                                    :default-value="default_date"
+                                    :editable="false"
+                                    value-format="timestamp"
+                                    valueOnOpen="onOpen"
+                                    placeholder="اختر وقت المباراة">
+                                </el-time-picker>
+                            </div>
+                        </div>
+                        <div class="alert-danger"
+                             style="text-align: right;width: 100%;margin: 15px 0;padding: 0 15px;color: #822424;"
+                             v-if="validations && validations.match_time">
+                            @{{ validations['match_time'][0] }}
                         </div>
                         <div class="form-actions form-group col-lg-4 offset-lg-4" style="margin-bottom: 0px;">
                             <button type="button" @click.prevent="saveMatch" :disabled="disabledButton" class="btn btn-secondary btn-md" style="width: 100%">
