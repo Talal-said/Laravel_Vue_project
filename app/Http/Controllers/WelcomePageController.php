@@ -15,30 +15,35 @@ class WelcomePageController extends Controller
         $date_now = date("d-m-Y"); // OR m/d/Y
         $today_date_timestamp = strtotime("-3 hours", strtotime($date_now ." 12:00:00AM")) * 1000;
 
+
         $smallest_date = DB::select(DB::raw("SELECT MIN(match_date) AS Date FROM `matches`
-        WHERE `match_date` >= $today_date_timestamp"));
+                        WHERE `match_date` >= $today_date_timestamp"));
 
         $smallest_date_value = $smallest_date[0]->Date;
-//        return response()->json(compact('smallest_date_value'));
-        if($smallest_date_value)
-        {
+
+        if($today_date_timestamp == $smallest_date_value){
+
             $smallest_time = DB::select(DB::raw("SELECT MIN(match_time) AS Time FROM `matches`
-            WHERE `match_date` = $smallest_date_value AND `match_time` > $time_now"));
+                            WHERE (`match_date`= $smallest_date_value) AND (`match_time` > $time_now)"));
 
             $smallest_time_value = $smallest_time[0]->Time;
+
         }
 
-        if(!$smallest_time_value){
+        if(!isset($smallest_time_value)){
             $smallest_date = DB::select(DB::raw("SELECT MIN(match_date) AS Date FROM `matches`
-            WHERE `match_date` > $today_date_timestamp"));
+                            WHERE `match_date` > $today_date_timestamp"));
 
             $smallest_date_value = $smallest_date[0]->Date;
 
-            $smallest_time = DB::select(DB::raw("SELECT MIN(match_time) AS Time FROM `matches`
-            WHERE `match_date` = $smallest_date_value AND `match_time` > $time_now"));
+            if(isset($smallest_date_value)){
+                $smallest_time = DB::select(DB::raw("SELECT MIN(match_time) AS Time FROM `matches`
+                                WHERE `match_date` = $smallest_date_value AND `match_time` > $time_now"));
 
-            $smallest_time_value = $smallest_time[0]->Time;
+                $smallest_time_value = $smallest_time[0]->Time;
+            }
         }
+
         if($smallest_date_value && $smallest_time_value){
             $matches = Match::where([
                 ['matches.match_date' , '=' , $smallest_date_value] ,
@@ -82,14 +87,14 @@ class WelcomePageController extends Controller
                 // e.g. : 2016/02/08
                 document.write(formatted_string);
             </script>";
-
             $closest_match_time = "<script>
                 var timestamp = $smallest_time_value;
                 var time_not_formatted = new Date(timestamp);
                 var formatted_time = time_not_formatted.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
                 document.write(formatted_time);
             </script>";
-        }else{
+        }
+        else{
             $team_1_name = null;
             $team_1_logo = null;
             $team_2_name = null;

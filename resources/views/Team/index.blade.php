@@ -110,7 +110,7 @@
         .table-images{
             width: 70px;
             height: 70px;
-            object-fit: cover;
+            object-fit: contain;
         }
         .table-p{
             margin-right: 15px;
