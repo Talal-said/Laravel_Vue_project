@@ -21,16 +21,17 @@ class WelcomePageController extends Controller
 
         $smallest_date_value = $smallest_date[0]->Date;
 
-        if($today_date_timestamp == $smallest_date_value){
+
+        if(isset($smallest_date_value) && $smallest_date_value == $today_date_timestamp){
 
             $smallest_time = DB::select(DB::raw("SELECT MIN(match_time) AS Time FROM `matches`
-                            WHERE (`match_date`= $smallest_date_value) AND (`match_time` > $time_now)"));
+                            WHERE (`match_date`= $today_date_timestamp) AND (`match_time` > $time_now)"));
 
             $smallest_time_value = $smallest_time[0]->Time;
 
         }
 
-        if(!isset($smallest_time_value)){
+        if(isset($smallest_date_value) && !isset($smallest_time_value)){
             $smallest_date = DB::select(DB::raw("SELECT MIN(match_date) AS Date FROM `matches`
                             WHERE `match_date` > $today_date_timestamp"));
 
@@ -38,7 +39,7 @@ class WelcomePageController extends Controller
 
             if(isset($smallest_date_value)){
                 $smallest_time = DB::select(DB::raw("SELECT MIN(match_time) AS Time FROM `matches`
-                                WHERE `match_date` = $smallest_date_value AND `match_time` > $time_now"));
+                                WHERE `match_date` = $smallest_date_value"));
 
                 $smallest_time_value = $smallest_time[0]->Time;
             }
@@ -58,41 +59,19 @@ class WelcomePageController extends Controller
             $team_1_logo = $team1->team_logo;
             $team_2_logo = $team2->team_logo;
 
-            $end_match_time = "<script>
-                var timestamp = $smallest_time_value;
-                var end_time = new Date(timestamp + 105*60000);
-                // add 105 min (45 min * 2 + 15)
-                var formatted_time = end_time.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
-                document.write(formatted_time);
-            </script>";
-            $closest_match_date = "<script>
-                var timestamp = $smallest_date_value;
-                var date_not_formatted = new Date(timestamp);
+            $date_time_query = DB::select(DB::raw("SELECT
+                DATE_FORMAT(FROM_UNIXTIME($smallest_date_value DIV 1000), '%d-%m-%Y') AS 'closest_match_date' ,
+                DATE_FORMAT(FROM_UNIXTIME($smallest_time_value DIV 1000), '%h:%i %p') AS 'closest_match_time' ,
+                DATE_FORMAT(FROM_UNIXTIME(($smallest_time_value DIV 1000) + (105 * 60)), '%h:%i %p') AS 'end_match_time'"));
 
-                var formatted_string = date_not_formatted.getFullYear() + '/';
-                // e.g. : 2016/
-                if (date_not_formatted.getMonth() < 9) {
-                  formatted_string += '0';
-                }
-                // e.g. : 2 -> 02
-                formatted_string += (date_not_formatted.getMonth() + 1);
-                // e.g. : 0 = January -> 1 = January
-                formatted_string += '/';
-                // e.g. : 2016/02/
-                if(date_not_formatted.getDate() < 10) {
-                  formatted_string += '0';
-                }
-                // e.g. : 8 -> 08
-                formatted_string += date_not_formatted.getDate();
-                // e.g. : 2016/02/08
-                document.write(formatted_string);
-            </script>";
-            $closest_match_time = "<script>
-                var timestamp = $smallest_time_value;
-                var time_not_formatted = new Date(timestamp);
-                var formatted_time = time_not_formatted.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
-                document.write(formatted_time);
-            </script>";
+
+
+            $end_match_time = $date_time_query[0]->end_match_time;
+            $closest_match_time = $date_time_query[0]->closest_match_time;
+            $closest_match_date_php = $date_time_query[0]->closest_match_date;
+            $closest_match_date_array = explode('-', $closest_match_date_php);
+            $closest_match_date_js = $closest_match_date_array[1] . '/' . $closest_match_date_array[0] . '/' . $closest_match_date_array[2] . " " . $closest_match_time;
+            // to have the format mm/dd/YYYY H:i A
         }
         else{
             $team_1_name = null;
@@ -101,12 +80,13 @@ class WelcomePageController extends Controller
             $team_2_logo = null;
             $end_match_time = null;
             $closest_match_time = null;
-            $closest_match_date = null;
+            $closest_match_date_php = null;
+            $closest_match_date_js = null;
         }
 
         //for the teams 6 logo and names in welcome page
         $teams = Team::select('team_name', 'team_logo')->limit(6)->get();
 
-        return view('welcome', compact('teams', 'closest_match_date', 'closest_match_time', 'end_match_time', 'team_1_name' , 'team_1_logo', 'team_2_name', 'team_2_logo'));
+        return view('welcome', compact('teams', 'closest_match_date_js', 'closest_match_date_php', 'closest_match_time', 'end_match_time', 'team_1_name' , 'team_1_logo', 'team_2_name', 'team_2_logo'));
     }
 }

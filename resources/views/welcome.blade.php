@@ -243,7 +243,7 @@
 <!-- Coundown Section End -->
 
 <!-- Coundown Section Start -->
-@if($closest_match_time && $closest_match_date)
+@if($closest_match_time && $closest_match_date_php)
 <section id="" class="countdown-timer section-padding">
     <div class="container">
         <div class="row text-center">
@@ -300,7 +300,7 @@
                 <div class="counter wow fadeInRight" data-wow-delay="0.6s">
                     <div class="icon"><i class="lni-timer"></i></div>
                     <p>وقت المباراة القادمة</p>
-                    <span>@php echo($closest_match_time ? $closest_match_time : "غير محدد"); @endphp – @php echo($end_match_time ? $end_match_time : "غير محدد"); @endphp</span>
+                    <span>{{ $closest_match_time ? $closest_match_time : "غير محدد" }} – {{ $end_match_time ? $end_match_time : "غير محدد" }}</span>
                 </div>
             </div>
             <!-- Counter Item -->
@@ -308,7 +308,7 @@
                 <div class="counter wow fadeInRight" data-wow-delay="1.2s">
                     <div class="icon"><i class="lni-calendar"></i></div>
                     <p>تاريخ المباراة القادمة</p>
-                    <span>@php echo($closest_match_date ? $closest_match_date : "غير محدد"); @endphp</span>
+                    <span>{{ $closest_match_date_php ? $closest_match_date_php : "غير محدد" }}</span>
                 </div>
             </div>
             <!-- Counter Item -->
@@ -465,11 +465,10 @@
 <script src="{{ asset('welcomePage/assets/js/jquery.slicknav.js') }}"></script>
 <script src="{{ asset('welcomePage/assets/js/nivo-lightbox.js') }}"></script>
 <script src="{{ asset('welcomePage/assets/js/main.js') }}"></script>
-@php echo($closest_match_date ? $closest_match_date : "<script>var formatted_string = '2000/5/5'</script>") @endphp
-@php echo($closest_match_time ? $closest_match_time : "<script>var formatted_time = '09:25 AM'</script>") @endphp
+
 <script>
     // Set the date we're counting down to
-    var countDownDate = new Date(formatted_string + ' ' + formatted_time).getTime();
+    var countDownDate = new Date('{{ $closest_match_date_js ? $closest_match_date_js : '2000/5/5 09:25 AM' }}').getTime();
     // Update the count down every 1 second
     var x = setInterval(function () {
 
@@ -510,11 +509,6 @@
             document.getElementsByClassName("seconds")[0].innerHTML = secondSpan;
         }
     }, 1000);
-    $(document).ready(function() {
-        $("body").contents().filter(function() {
-            return this.nodeType == 3;
-        }).replaceWith("");
-    });
 </script>
 </body>
 </html>

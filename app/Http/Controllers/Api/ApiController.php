@@ -36,7 +36,6 @@ class ApiController extends Controller
             $filter = '';
         }
 
-
         $matches = DB::select(DB::raw("SELECT matches.id,
         DATE_FORMAT(FROM_UNIXTIME(`match_date` DIV 1000), '%d-%m-%Y') AS 'match_date' ,
         DATE_FORMAT(FROM_UNIXTIME(`match_time` DIV 1000), '%h:%i %p ') AS 'match_time',
@@ -48,17 +47,6 @@ class ApiController extends Controller
         WHERE leagues.name LIKE '%$filter%'
         ORDER BY $filed $type
         "));
-
-
-//SELECT matches.id, matches.team_1, matches.team_2,
-//        DATE_FORMAT(FROM_UNIXTIME(`match_date` DIV 1000), '%d-%m-%Y') AS 'match_date' ,
-//        DATE_FORMAT(FROM_UNIXTIME(`match_time` DIV 1000), '%h:%i %p ') AS 'match_time',
-//teams1.team_name, teams2.team_name
-//FROM matches
-//JOIN leagues ON leagues.id = matches.league_id
-//JOIN teams teams1 ON teams1.id = matches.team_1
-//JOIN teams teams2 ON teams2.id = matches.team_2
-
 
         return response()->json(compact('matches'));
     }
@@ -104,10 +92,6 @@ class ApiController extends Controller
             WHERE (teams1.team_name LIKE '%$teamName%' OR teams2.team_name LIKE '%$teamName%')"));
         }
 
-//        return response()->json(['teamname'=>$teamName, 'date'=>$date]);
-
-
-
         return response()->json(compact('matches'));
     }
 
@@ -128,16 +112,9 @@ class ApiController extends Controller
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            return response()->json(['errors'=>$validator->errors()]);
+            return response()->json(['errors'=>$validator->errors()], 402);
         }
 
-        $record = [];
-        foreach($data as $key => $value){
-            if($key == 'password_confirmation'){continue;}
-            if($key == 'password'){$value = bcrypt($value);}
-            $record[$key] = $value;
-        }
-        $record['user_type'] = 'user';
         User::create([
             'name'=>$request->name,
             'email'=>$request->email,
