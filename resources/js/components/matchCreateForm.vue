@@ -8,7 +8,6 @@ export default {
             match_date: '',
             default_date: '',
             data_changed: false,
-            key: '0',
             align: 'right',
             onOpen: "5:16 PM",
             leagueName: "",
@@ -32,6 +31,7 @@ export default {
         leagues: null,
     },
     mounted() {
+        // waits until the whole view is rendered
         this.$nextTick(() => { //with this we skip the first change
             this.data_changed = true;
         });
@@ -65,18 +65,6 @@ export default {
             // e.g. : 2016/02/08
             return formatted_string;
         },
-        makeDisable(index, e){
-            console.log(e);
-        },
-        update: function (selected) {
-            for(var i = 0; i < this.teamsInDB.length; i++) {
-                if(this.teamsInDB[i]['id'] == this.selectedTeam1 || this.teamsInDB[i]['id'] == this.selectedTeam2){
-                    this.teamsInDB[i]['disabled'] = true;
-                }else{
-                    this.teamsInDB[i]['disabled'] = false;
-                }
-            }
-        },
         insertTeams: function (selected) {
             this.teamsInDB = [];
             for(var i = 0; i < this.teams.length; i++) {
@@ -90,6 +78,15 @@ export default {
             this.selectedTeam1 = '';
             this.selectedTeam2 = '';
 
+        },
+        update: function (selected) {
+            for(var i = 0; i < this.teamsInDB.length; i++) {
+                if(this.teamsInDB[i]['id'] == this.selectedTeam1 || this.teamsInDB[i]['id'] == this.selectedTeam2){
+                    this.teamsInDB[i]['disabled'] = true;
+                }else{
+                    this.teamsInDB[i]['disabled'] = false;
+                }
+            }
         },
         saveMatch(){
             this.disabledButton = true;
@@ -131,6 +128,8 @@ export default {
         }
         if(this.match){
             this.teamsInDB = [];
+            //for inserting the teams in teamsInDB for the first time
+            // when editing, so we get all the teams playing in that league
             for(var i = 0; i < this.teams.length; i++) {
                 if(this.teams[i]['league_id'] == this.match.league_id){
                     this.teamsInDB.push(this.teams[i]);
@@ -145,7 +144,6 @@ export default {
             this.selectedTeam1 = this.match.team_1;
             this.selectedTeam2 = this.match.team_2;
             this.default_date = this.changeDateFormat(parseInt(this.match.match_date));
-            console.log(this.match.match_time);
             this.match_time = this.match.match_time;
             this.match_date = this.match.match_date;
             for(var i = 0; i < this.teamsInDB.length; i++) {

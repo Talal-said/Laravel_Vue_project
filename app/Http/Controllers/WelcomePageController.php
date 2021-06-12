@@ -49,9 +49,9 @@ class WelcomePageController extends Controller
             $matches = Match::where([
                 ['matches.match_date' , '=' , $smallest_date_value] ,
                 ['matches.match_time', '=', $smallest_time_value]
-            ])->get();
-            $team_1_id = $matches[0]->team_1;
-            $team_2_id = $matches[0]->team_2;
+            ])->first();
+            $team_1_id = $matches->team_1;
+            $team_2_id = $matches->team_2;
             $team1 = Team::find($team_1_id);
             $team2 = Team::find($team_2_id);
             $team_1_name = $team1->team_name;

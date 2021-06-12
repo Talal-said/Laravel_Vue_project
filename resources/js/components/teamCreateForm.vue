@@ -8,7 +8,7 @@ export default {
         return {
             title : "إضافة نادي جديد",
             buttonName: "إضــافــة",
-            fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
+            fileList: [],
             image: '',
             imageUrl: '',
             myImageUrl: null,
@@ -32,13 +32,18 @@ export default {
         leagues: null,
     },
     methods: {
+        //after getting the response from url('/upload')
         handleAvatarSuccess(res, file) {
             this.imageUrl = URL.createObjectURL(file.raw);
             this.myImageUrl = res.path;
             this.myImageName = res.name;
+
+            //---------------------------------------------------
             //for handling the update, we use this.teamLogo for
             // checking if the image was updated or not
+            //---------------------------------------------------
             this.teamLogo = '';
+
             this.image = file.raw;
         },
         beforeAvatarUpload(file) {
@@ -54,12 +59,6 @@ export default {
             }
             return isJPG && isLt2M || isJPEG && isLt2M || isPNG && isLt2M;
         },
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-        },
-        handlePreview(file) {
-            console.log(file);
-        },
         saveTeam(){
             this.disabledButton = true;
             let url = '/team';
@@ -68,6 +67,7 @@ export default {
             }
             let formData = new FormData();
             formData.append('team_name', this.teamName);
+            //works only if the logo image was changed
             if(!this.teamLogo){
                 formData.append('team_logo', this.image);
                 formData.append('image_name', this.myImageUrl);
